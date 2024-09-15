@@ -62,12 +62,6 @@ def get_todos_handler(
     raise HTTPException(status_code=404, detail="ToDo Not Found")
 
 
-class CreateToDoRequest(BaseModel):
-    id: int
-    contents: str
-    is_done: bool
-
-
 @app.post("/todos", status_code=201)
 def create_todo_handler(request: CreateToDoRequest):
     todo_data[request.id] = request.dict()
