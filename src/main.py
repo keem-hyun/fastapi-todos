@@ -1,5 +1,12 @@
-from fastapi import FastAPI, Body, HTTPException
+from typing import List
+
+from fastapi import FastAPI, Body, HTTPException, Depends
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from database.connection import get_db
+from database.orm import ToDo
+from database.repository import get_todos
 
 app = FastAPI()
 
@@ -29,11 +36,14 @@ todo_data = {
 
 
 @app.get("/todos", status_code=200)
-def get_todos_handler(order: str | None = None):
-    ret = list(todo_data.values())
-    if order == "DESC":
-        return ret[::-1]
-    return ret
+def get_todos_handler(
+        order: str | None = None,
+        session: Session = Depends(get_db)
+):
+    todos: List[ToDo] = get_todos(session=session)
+    if order and order == "DESC":
+        return todos[::-1]
+    return todos
 
 
 @app.get("/todos/{todo_id}", status_code=200)
