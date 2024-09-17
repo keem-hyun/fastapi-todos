@@ -34,7 +34,7 @@ def test_get_todos(client, mocker):
 
 
 def test_get_todo(client, mocker):
-    #200
+    # 200
     mocker.patch(
         "main.get_todo_by_todo_id",
         return_value=ToDo(id=1, contents="todo", is_done=True)
@@ -44,9 +44,30 @@ def test_get_todo(client, mocker):
     assert response.status_code == 200
     assert response.json() == {"id": 1, "contents": "todo", "is_done": True}
 
-    #404
+    # 404
     mocker.patch("main.get_todo_by_todo_id", return_value=None)
 
     response = client.get("/todos/1")
     assert response.status_code == 404
     assert response.json() == {"detail": "ToDo Not Found"}
+
+
+def test_create_todo(client, mocker):
+    create_spy = mocker.spy(ToDo, "create")
+    mocker.patch(
+        "main.create_todo",
+        return_value=ToDo(id=1, contents="todo", is_done=True)
+    )
+
+    body = {
+        "contents": "test",
+        "is_done": False
+    }
+    response = client.post("/todos", json=body)
+
+    assert create_spy.spy_return.id is None
+    assert create_spy.spy_return.contents == "test"
+    assert create_spy.spy_return.is_done is False
+
+    assert response.status_code == 201
+    assert response.json() == {"id": 1, "contents": "todo", "is_done": True}
