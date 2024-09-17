@@ -15,7 +15,7 @@ def user_sign_up_handler(
     user_service: UserService = Depends(),
     user_repo: UserRepository = Depends()
 ):
-    hashed_password: str = user_service.hash_password(
+    hashed_password: str = user_service.hashed_password(
         plain_password=request.password
     )
 
