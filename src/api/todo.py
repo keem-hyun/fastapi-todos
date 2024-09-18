@@ -20,7 +20,7 @@ def get_todos_handler(
         user_repo: UserRepository = Depends(),
 ) -> ToDoListSchema:
     username: str = user_service.decode_jwt(access_token=access_token)
-    user: User | None = user_repo.get_use_by_username(username=username)
+    user: User | None = user_repo.get_user_by_username(username=username)
     if not user:
         raise HTTPException(status_code=404, detail="User Not Found")
 
